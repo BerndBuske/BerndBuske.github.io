@@ -4,7 +4,9 @@ html {
 }
 
 .thumb-img {
-  border-color: #000000 !important;
+  box-shadow: 0 0 2px 1px rgba(255, 255, 255, .15) !important;
+  border-color: #333333 !important;
+  border-width: 3px !important;
 }
 
 #loupeContainer div.background {

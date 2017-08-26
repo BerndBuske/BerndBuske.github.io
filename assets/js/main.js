@@ -1,8 +1,6 @@
 // Minified Debounce taken from UnderscoreJS (MIT)
 function debounce(a,b,c){var d;return function(){var e=this,f=arguments;clearTimeout(d),d=setTimeout(function(){d=null,c||a.apply(e,f)},b),c&&!d&&a.apply(e,f)}}
 
-var WebGalleryTrack = WebGalleryTrack || {};
-
 function init(){
 
     // Let's cache some stuff!
@@ -24,6 +22,10 @@ function init(){
         _$buttonNextSideLoupe = $("#buttonNextSideLoupe"),
         _$countCurrent = $("#countCurrent"),
         _$countTotal = $("#countTotal"),
+        _$pageCountCurrent = $("#pageCountCurrent"),
+        _$pageCountTotal = $("#pageCountTotal"),
+        _$buttonPrevPage = $("#buttonPrevPage"),
+        _$buttonNextPage = $("#buttonNextPage"),
         _$buttonClose = $("#loupeCloseButton");
 
     var i,
@@ -33,28 +35,36 @@ function init(){
         _loupeIsTransitioning = false,
         _currentImageIndex,
         _autoViewThumb,
-        _paginationStyle = "scroll",
+        _paginationStyle = "none",
+        _pageSize = 20,
+        _totalPages = 1,
+        _currentPageIndex = 0,
         _viewportHeight = 0,
+        _viewportWidth = 0,
         _thumbsToLoad = 0,
         _lastLoadedThumbIndex = -1,
-        _currentRowContents = [];
-
+        _$lastLoadedThumb;
 
     var onWindowResize = debounce(
         function(e) {
             _viewportHeight = _$w.height();
-            sizeAllThumbnails();
-            _$w.trigger("scroll");
+            _viewportWidth = _$w.width();
+            if(_paginationStyle == "scroll"){
+                checkForSpace();
+            }
         },
         250
     );
 
     // Set the current height
     _viewportHeight = _$w.height();
+    _viewportWidth = _$w.width();
     _$w.on(
         "resize",
         onWindowResize
     );
+
+    
 
     // create a global scroll handler so that we can make the header more compact as the user scrolls down the page
     _$w.on(
@@ -73,9 +83,6 @@ function init(){
         LR.images[i].index = i;
         LR.images[i].thumbIsLoading = false;
         LR.images[i].thumbHasLoaded = false;
-        LR.images[i].aspectRatio = LR.images[i].largeWidth / LR.images[i].largeHeight;
-        LR.images[i].currentThumbWidth = 0;
-        LR.images[i].currentThumbHeight = 0;
         // Re-set the title if needed
         if(LR.images[i].title == "nil"){
             LR.images[i].title = "";
@@ -85,11 +92,19 @@ function init(){
             LR.images[i].caption = "";
         }
         // Create the individual thumbnail partial
-        LR.images[i].$thumbnail = $('<div class="thumbnail not-loaded" data-large-img="images/large/'+ LR.images[i].exportFilename +'.jpg" data-id="ID'+ LR.images[i].id +'" data-title="' + LR.images[i].title + '" data-caption="' + LR.images[i].caption + '" data-native-width="' + LR.images[i].largeWidth + '" data-native-height="' + LR.images[i].largeHeight + '"><img class="thumb-img" src="" /></div>');
+        LR.images[i].$thumbnail = $('<div class="thumbnail"><div class="image-container"><div class="image"><img class="thumb-img" src="" data-large-img="images/large/'+ LR.images[i].exportFilename +'.jpg" data-id="ID'+ LR.images[i].id +'" data-title="' + LR.images[i].title + '" data-caption="' + LR.images[i].caption + '"/></div></div></div>');
         LR.images[i].$thumbnail.data("index", i);
         // Isolate the actual thumbnail image
         LR.images[i].$thumbnailImg = $(LR.images[i].$thumbnail.find("img")[0]);
         LR.images[i].$thumbnailImg.data("index", i);
+        LR.images[i].$thumbnailImg.on(
+            "load",
+            onThumbnailImgLoad
+        );
+        LR.images[i].$thumbnailImg.on(
+            "error",
+            onThumbnailImgError
+        );
         _$thumbnails.push(LR.images[i].$thumbnail);
     }
 
@@ -99,12 +114,25 @@ function init(){
         switch(_parts[1]){
             case "view" :
                 for(var i = 0; i < LR.images.length; i++){
-                    if(LR.images[i].$thumbnail.attr("data-id") == _parts[2]){
-                        _autoViewThumb = LR.images[i].$thumbnail;
+                    if(LR.images[i].$thumbnailImg.attr("data-id") == _parts[2]){
+                        _autoViewThumb = LR.images[i].$thumbnailImg;
                         break;
                     }
                 }
                 break;
+            case "page" :
+                if(_parts[2]){
+                    _currentPageIndex = parseInt(_parts[2]) - 1;
+                }
+                if(_parts[3] && _parts[3] == "view" && _parts[4]){
+                    for(var i = 0; i < LR.images.length; i++){
+                        if(LR.images[i].$thumbnailImg.attr("data-id") == _parts[4]){
+                            _autoViewThumb = LR.images[i].$thumbnailImg;
+                            break;
+                        }
+                    }
+                }
+                break; 
         }
     }
 
@@ -115,19 +143,65 @@ function init(){
             renderAllThumbnails();
             break;
 
+        case "pages":
+            if(_$body.attr("data-pagination-size")){
+                _pageSize = parseInt(_$body.attr("data-pagination-size"));
+                _totalPages = Math.ceil(LR.images.length / _pageSize);
+            }
+            initPagination();
+            break;
+
         case "scroll":
             initLoadOnScroll();
             break; 
     }
 
-    function getTargetRowHeight() {
-        return _$body.attr("data-target-row-height");
-    }
+    // Pagination Style: "none"
 
     function renderAllThumbnails() {
         for(var i = 0; i < LR.images.length; i++){
             _$thumbnailsParent.append(LR.images[i].$thumbnail);
-            LR.images[i].$thumbnail.on(
+            LR.images[i].$thumbnailImg.on(
+                "click",
+                onThumbnailClick
+            );
+            LR.images[i].$thumbnailImg.attr(
+                "src",
+                "images/thumbnails/" + LR.images[i].exportFilename + ".jpg"
+            );
+            _$lastLoadedThumb = LR.images[i].$thumbnailImg;
+            _lastLoadedThumbIndex = LR.images[i].index;
+        }
+    }
+
+    // Pagination Style: "pages"
+
+    _$buttonPrevPage.on(
+        "click",
+        showPrevPage
+    );
+
+    _$buttonNextPage.on(
+        "click",
+        showNextPage
+    );
+
+    function initPagination() {
+        renderThumbnailsForPageIndex(_currentPageIndex);
+    }
+
+    function renderThumbnailsForPageIndex(index) {
+
+        // clean existing stuff
+        _$thumbnailsParent.find("div.thumbnail").detach();
+
+        var _startIndex = index * _pageSize;
+        for(var i = _startIndex; i < _startIndex + _pageSize; i++){
+            if(LR.images[i] == undefined){
+                break;
+            }
+            _$thumbnailsParent.append(LR.images[i].$thumbnail);
+            LR.images[i].$thumbnailImg.on(
                 "click",
                 onThumbnailClick
             );
@@ -137,55 +211,34 @@ function init(){
             );
             _lastLoadedThumbIndex = LR.images[i].index;
         }
-        sizeAllThumbnails();
-    }
-
-    function sizeAllThumbnails() {
-        var _availableWidth = _$body.innerWidth();
-        _$thumbnailContainer.css("width", _availableWidth + "px");
-        _currentRowContents = [];
-        var _currentRowWidth = 0;
-        var _currentRowOffsetTop = 0;
-        var _thumbWidth, _thumbHeight;
-        for(var i = 0; i < LR.images.length; i++){
-            _currentRowContents.push(LR.images[i]);
-            _thumbHeight = getTargetRowHeight();
-            _thumbWidth = Math.round(_thumbHeight * LR.images[i].aspectRatio);
-            LR.images[i].$thumbnail.css({"width" : _thumbWidth + "px", "height" : _thumbHeight + "px"});
-            LR.images[i].currentThumbWidth = _thumbWidth;
-            LR.images[i].currentThumbHeight = _thumbHeight;
-            _currentRowWidth += _thumbWidth;
-            // if we're past our max width
-            if(_currentRowWidth > _availableWidth){
-                _currentRowOffsetTop += resizeRow(_currentRowContents, _availableWidth, _currentRowWidth);
-                for(var j = 0; j < _currentRowContents.length; j++){
-                    _currentRowContents[j].$thumbnail.data("currentRowOffsetTop", _currentRowOffsetTop);
-                }
-                _currentRowContents = [];
-                _currentRowWidth = 0;
-            }
-            else {
-                LR.images[i].$thumbnail.data("currentRowOffsetTop", _currentRowOffsetTop);
-            }
+        _currentPageIndex = index;
+        setPageNav();
+        if(_currentPageIndex > 0){
+            setPageHashForPageNumber(_currentPageIndex + 1);
         }
     }
 
-    function resizeRow(rowArray, availableWidth, currentWidth){
-        var _reductionRatio = availableWidth / currentWidth;
-        var _newCurrentWidth = 0;
-        for(var i = 0; i < rowArray.length; i++){
-            var _thumbHeight = Math.floor(rowArray[i].currentThumbHeight * _reductionRatio);
-            var _thumbWidth = Math.floor(rowArray[i].currentThumbWidth * _reductionRatio);
-            _newCurrentWidth += _thumbWidth;
-            if(i == rowArray.length - 1 && _newCurrentWidth < availableWidth){
-                _thumbWidth += (availableWidth - _newCurrentWidth);
-            }
-            rowArray[i].$thumbnail.css({"width" : _thumbWidth + "px", "height" : _thumbHeight + "px"});
-            rowArray[i].currentThumbWidth = _thumbWidth;
-            rowArray[i].currentThumbHeight = _thumbHeight;
+    function showNextPage() {
+        if(_currentPageIndex < _totalPages - 1){
+            renderThumbnailsForPageIndex(_currentPageIndex + 1);
         }
-        return _thumbHeight + parseInt(rowArray[0].$thumbnail.css("margin-bottom"), 10);
     }
+
+    function showPrevPage() {
+        if(_currentPageIndex > 0){
+            renderThumbnailsForPageIndex(_currentPageIndex - 1);
+        }
+    }
+
+    function setPageNav() {
+        _$pageCountCurrent.html(_currentPageIndex + 1);
+        _$pageCountTotal.html(_totalPages);
+    }
+
+    function setPageHashForPageNumber(num) {
+        window.location.hash = "#/page/" + num;
+    }
+
 
     // Pagination Style: "scroll"
 
@@ -197,37 +250,49 @@ function init(){
 
         var _bodyHeight = _$body.height();
 
+        // load the first image
+        _$thumbnailsParent.append(LR.images[0].$thumbnail);
+        LR.images[0].$thumbnailImg.on(
+            "click",
+            onThumbnailClick
+        );
+        LR.images[0].$thumbnailImg.attr(
+            "src",
+            "images/thumbnails/" + LR.images[0].exportFilename + ".jpg"
+        );
+        _$lastLoadedThumb = LR.images[0].$thumbnailImg;
+        _lastLoadedThumbIndex = LR.images[0].index;
 
-        // First, we need to create a container for every image in the gallery
-        for(var i = 0; i < LR.images.length; i++){
+        if(LR.images.length < 2){
+            return;
+        }
+
+        // Now that we have a thumbnail on the page, grab some measurements
+        var _thumbOuterWidth = LR.images[0].$thumbnail.outerWidth();
+        var _thumbOuterHeight = LR.images[0].$thumbnail.outerWidth();
+        var _rowHeight = _$body.height() - _bodyHeight;
+        var _availableWidth = $("#thumbnailContainer").width();
+        var _rowsToLoad = Math.ceil((_$w.height() - _bodyHeight) / _rowHeight) + 1;
+        var _thumbsPerRow = Math.floor(_availableWidth / _thumbOuterWidth);
+        var _thumbsToLoad = _rowsToLoad * _thumbsPerRow;
+
+        for(var i = 1; i < _thumbsToLoad; i++){
+
+            if(LR.images[i] == undefined){
+                break;
+            }
+
             _$thumbnailsParent.append(LR.images[i].$thumbnail);
-            LR.images[i].$thumbnail.on(
+            LR.images[i].$thumbnailImg.on(
                 "click",
                 onThumbnailClick
             );
-        }
-
-        // Size them all based on the current viewport dimensions
-        sizeAllThumbnails();
-
-        // Loop through them, and intiate loading on anything that's visible within the current viewport
-
-        for(var i = 0; i < LR.images.length; i++){
-            if(LR.images[i].$thumbnail.data("currentRowOffsetTop") < _$w.height() + 100){
-                LR.images[i].$thumbnailImg.on(
-                    "load",
-                    onThumbnailImgLoad
-                );
-                LR.images[i].$thumbnailImg.on(
-                    "error",
-                    onThumbnailImgError
-                );
-               LR.images[i].$thumbnailImg.attr(
+            LR.images[i].$thumbnailImg.attr(
                 "src",
                 "images/thumbnails/" + LR.images[i].exportFilename + ".jpg"
-                );
-                _lastLoadedThumbIndex = LR.images[i].index; 
-            }
+            );
+            _$lastLoadedThumb = LR.images[i].$thumbnailImg;
+            _lastLoadedThumbIndex = LR.images[i].index;
         }
 
         _$w.on(
@@ -236,8 +301,59 @@ function init(){
         );
     }
 
+    function checkForSpace(){
+
+        var _extraItemsToLoad = 0;
+        var _$thumb = _$lastLoadedThumb.parent().parent().parent();
+        var _lastThumbTopOffset = _$thumb.offset().top;
+        var _thumbTopOffset = _lastThumbTopOffset;
+        var _thumbWidth = _$thumb.outerWidth();
+        var _lastRowAggregateWidth = _thumbWidth;
+
+        while(_thumbTopOffset == _lastThumbTopOffset){
+            if(_$thumb.prev().length > 0){
+                if(_$thumb.prev().offset().top < _lastThumbTopOffset){
+                    break;
+                }
+                else {
+                    _lastRowAggregateWidth += _$thumb.prev().outerWidth();
+                }
+                _$thumb = _$thumb.prev();
+            }
+            else{
+                break;
+            }
+        }
+
+        if(_lastRowAggregateWidth < _$thumbnailContainer.width()){
+            _extraItemsToLoad = (_$thumbnailContainer.width() - _lastRowAggregateWidth) / _thumbWidth;
+            if(_extraItemsToLoad < 1){
+                _extraItemsToLoad = 0;
+            }
+            else{
+                _extraItemsToLoad = Math.round(_extraItemsToLoad);
+            }
+        }
+
+        console.log(_extraItemsToLoad);
+
+        if((_$w.scrollTop() + _viewportHeight) == _$body.height() && _thumbsToLoad == 0 && _lastLoadedThumbIndex < LR.images.length - 1){
+            loadMoreThumbnails(_lastLoadedThumbIndex + 1, (getCurrentColumnCount() * 2) + _extraItemsToLoad);
+        }
+        else if(_$body.height() < _viewportHeight && _thumbsToLoad == 0){
+            loadMoreThumbnails(_lastLoadedThumbIndex + 1, (getCurrentColumnCount() * 2) + _extraItemsToLoad);
+        }
+        else if(_extraItemsToLoad > 0 && _thumbsToLoad == 0 && _lastLoadedThumbIndex < LR.images.length - 1){
+            console.log("only loading extra items");
+            loadMoreThumbnails(_lastLoadedThumbIndex + 1, _extraItemsToLoad);
+        }
+
+    }
+
     function onWindowLoadScroll(e) {
-        checkForSpace();
+        if((_$w.scrollTop() + _viewportHeight) == _$body.height() && _thumbsToLoad == 0 && _lastLoadedThumbIndex < LR.images.length - 1){
+            loadMoreThumbnails(_lastLoadedThumbIndex + 1, getCurrentColumnCount() * 2);
+        }
     }
 
     function onWindowScroll(e) {
@@ -249,93 +365,59 @@ function init(){
         }
     }
 
-    function checkForSpace(){
-        if((_$w.scrollTop() + _viewportHeight) == _$body.height() && _thumbsToLoad == 0 && _lastLoadedThumbIndex < LR.images.length - 1){
-            loadMoreThumbnails(_lastLoadedThumbIndex + 1, 1);
+    // We use this to determine how many images to load on scroll
+    function getCurrentColumnCount() {
+        var _y;
+        var _columns = 1;
+        var _currentThumbs = _$thumbnailsParent.find("div.thumbnail");
+        if(_currentThumbs.length > 1){
+            _y = $(_currentThumbs[0]).offset().top;
         }
-        else if(_$body.height() < _viewportHeight && _thumbsToLoad == 0){
-            loadMoreThumbnails(_lastLoadedThumbIndex + 1, 1);
+        else {
+            return _columns;
         }
+        for(var i = 1; i < _currentThumbs.length; i++){
+            var _top = $(_currentThumbs[i]).offset().top;
+            if(_top != _y){
+                return _columns;
+            }
+            else {
+                _columns++;
+            }
+        }
+        return _columns;
     }
 
-    function loadMoreThumbnails(startIndex, numRows) {
-        var _currentRowOffsetTop = LR.images[_lastLoadedThumbIndex].$thumbnail.data("currentRowOffsetTop");
-        var _rowsAdded = 0;
-        var _newRowOffsetTop = _currentRowOffsetTop;
-        for(var i = startIndex; i < LR.images.length; i++){
+    function loadMoreThumbnails(startIndex, quantity) {
+        _thumbsToLoad = quantity;
+        for(var i = startIndex; i < startIndex + quantity; i++){
             if(LR.images[i] == undefined){
                 break;
             }
-
-            // Fill up the last row - there could be space in it after a viewport resize
-            if(LR.images[i].$thumbnail.data("currentRowOffsetTop") == _currentRowOffsetTop){
-                LR.images[i].$thumbnailImg.on(
-                    "load",
-                    onThumbnailImgLoad
-                );
-                LR.images[i].$thumbnailImg.on(
-                    "error",
-                    onThumbnailImgError
-                );
-                LR.images[i].$thumbnailImg.attr(
-                    "src",
-                    "images/thumbnails/" + LR.images[i].exportFilename + ".jpg"
-                );
-                _lastLoadedThumbIndex = LR.images[i].index;
-            }
-            else if(LR.images[i].$thumbnail.data("currentRowOffsetTop") > _currentRowOffsetTop){
-                _rowsAdded ++;
-
-                if(_rowsAdded > numRows){
-                    break;
-                }
-
-                _currentRowOffsetTop = LR.images[i].$thumbnail.data("currentRowOffsetTop");
-                LR.images[i].$thumbnailImg.on(
-                    "load",
-                    onThumbnailImgLoad
-                );
-                LR.images[i].$thumbnailImg.on(
-                    "error",
-                    onThumbnailImgError
-                );
-                LR.images[i].$thumbnailImg.attr(
-                    "src",
-                    "images/thumbnails/" + LR.images[i].exportFilename + ".jpg"
-                );
-                _lastLoadedThumbIndex = LR.images[i].index;
-            }
-
-            
+            _$thumbnailsParent.append(LR.images[i].$thumbnail);
+            LR.images[i].$thumbnailImg.on(
+                "click",
+                onThumbnailClick
+            );
+            LR.images[i].$thumbnailImg.attr(
+                "src",
+                "images/thumbnails/" + LR.images[i].exportFilename + ".jpg"
+            );
+            _$lastLoadedThumb = LR.images[i].$thumbnailImg;
+            _lastLoadedThumbIndex = LR.images[i].index;
         }
     }
 
     function onThumbnailImgLoad(e) {
-        var $el = $(e.currentTarget);
-        $el.parent().css(
-            {
-                "background-image"      : "url('" + $el.attr("src") + "')",
-                "background-size"       : "cover",
-                "background-position"   : "center center"
-            }
-        );
-        $el.css("display", "none");
-        $el.parent().removeClass("not-loaded");
         if(_thumbsToLoad > 0){
             _thumbsToLoad--;
-        }
-        else {
-            checkForSpace();
         }
     }
 
     function onThumbnailImgError(e) {
-        // we should inject an SVG or something here so that the thumbnail grid doesn't become oddly sized
+        // we should inject an SVG or something here so that the thumbnanil grid doesn't become oddly sized
         if(_thumbsToLoad > 0){
             _thumbsToLoad--;
-        }
-        else {
-            checkForSpace();
         }
     }
 
@@ -485,19 +567,13 @@ function init(){
             }
         );
         var _metadata = "";
-        if($thumbnail.attr("data-title") != "nil" && $thumbnail.attr("data-title") != ""){
+        if($thumbnail.attr("data-title") != "nil"){
             _metadata += '<p class="title">' + $thumbnail.attr("data-title") + '</p>';
         }
-        if($thumbnail.attr("data-caption") != "nil" && $thumbnail.attr("data-caption") != ""){
+        if($thumbnail.attr("data-caption") != "nil"){
             _metadata += '<p class="caption">' + $thumbnail.attr("data-caption") + '</p>';
         }
         _$loupeMeta.html(_metadata);
-        if(_metadata == ""){
-            _$loupeContainer.addClass("meta-empty");
-        }
-        else {
-            _$loupeContainer.removeClass("meta-empty");
-        }
         setLateralNavVisibilities();
     }
 
@@ -558,10 +634,10 @@ function init(){
             return;
         }
         if(_currentImageIndex == _$thumbnails.length - 1){
-            _$targetThumb = LR.images[0].$thumbnail;
+            _$targetThumb = LR.images[0].$thumbnailImg;
         }
         else{
-            _$targetThumb = LR.images[_currentImageIndex + 1].$thumbnail;
+            _$targetThumb = LR.images[_currentImageIndex + 1].$thumbnailImg;
         }
         hideCurrentImage();
         setCounts();
@@ -572,10 +648,10 @@ function init(){
             return;
         }
         if(_currentImageIndex == 0){
-            _$targetThumb = LR.images[$_thumbnails.length - 1].$thumbnail;
+            _$targetThumb = LR.images[$_thumbnails.length - 1].$thumbnailImg;
         }
         else{
-            _$targetThumb = LR.images[_currentImageIndex - 1].$thumbnail;
+            _$targetThumb = LR.images[_currentImageIndex - 1].$thumbnailImg;
         }
         hideCurrentImage();
         setCounts();
@@ -634,9 +710,13 @@ function init(){
         );
         unlockBody();
         var currentScrollTop = _$w.scrollTop();
-        window.location.hash = "";
+        if(_currentPageIndex > 0){
+            setPageHashForPageNumber(_currentPageIndex+1);
+        }
+        else{
+            window.location.hash = "";
+        }
         _$w.scrollTop(currentScrollTop);
-        _isOpen = false;
         _isOpen = false;
     }
 
@@ -690,9 +770,6 @@ function init(){
             }
         }
     }
-
-    // Put some stuff in the global scope so that Live Update can trigger it
-    WebGalleryTrack.sizeAllThumbnails = sizeAllThumbnails;
 
 }
 

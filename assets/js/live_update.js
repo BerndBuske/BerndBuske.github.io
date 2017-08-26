@@ -87,38 +87,83 @@ var safariArr = isSafariPat.exec( navigator.userAgent );
 */
 var clickTarget = NOOP;
 var tellLightroomWhatImagesWeAreUsing = NOOP;
-var tellLightroomCurrentImageCount = NOOP;
 var setActiveImageSize = NOOP;
-var callCallback = NOOP;
-var pushresult = NOOP;
 
 // ---------------------------------------------------------------------------
 
-callCallback = function() {
-    var javascript = 'myCallback.' + arguments[ 0 ] + "( ";
-    var j = arguments.length;
-    var c = j - 1;
-    for( var i = 1; i < j; i++ ) {
-        var arg = arguments[ i ];
-        if( typeof( arg ) == 'string' ) {
-            javascript = javascript + '"' + arg + '"';
+var callCallback = NOOP;
+var WIN_ENV = false;
+var MAC_ENV = false;
+
+// ---------------------------------------------------------------------------
+
+if( window.myCallback != null ){
+    MAC_ENV = true;
+
+    // We're being previewed on Mac.  Create a callback
+    // function for communicating from the web page into Lightroom.
+    callCallback = function() {
+        // On Mac we use a special javascript to talk to Lightroom.
+        var javascript = 'myCallback.' + arguments[ 0 ] + "( ";
+        var j = arguments.length;
+        var c = j - 1;
+        for( var i = 1; i < j; i++ ) {
+            var arg = arguments[ i ];
+            if( typeof( arg ) == 'string' ) {
+                javascript = javascript + '"' + arg + '"';
+            }
+            if( typeof( arg ) == 'number' ) {
+                javascript = javascript + arg
+            }
+            if( typeof( arg ) == 'undefined' ) {
+                javascript = javascript + 'undefined'
+            }
+            if( i < c ) {
+                javascript = javascript + ", "
+            }
         }
-        if( typeof( arg ) == 'number' ) {
-            javascript = javascript + arg
-        }
-        if( typeof( arg ) == 'undefined' ) {
-            javascript = javascript + 'undefined'
-        }
-        if( i < c ) {
-            javascript = javascript + ", "
-        }
+        javascript = javascript + " )"
+        eval( javascript )
     }
-    javascript = javascript + " )"
-    hosteval( javascript )
+    
+    pushresult = function( result ) {
+        callCallback( "pushresult", result )
+    }
 }
 
-pushresult = function( result ) {
-    callCallback( "pushresult", result )
+// ---------------------------------------------------------------------------
+
+else if( window.AgMode == 'preview' ) {
+    WIN_ENV = true;
+    // We're being previewed on Windows.  Create a callback
+    // function for communicating from the web page into Lightroom.
+    callCallback = function() {
+        // On windows we use a special lua: URL to talk to Lightroom.
+        var lua = arguments[ 0 ] + "( ";
+        var j = arguments.length;
+        var c = j - 1;
+        for( var i = 1; i < j; i++ ) {
+            var arg = arguments[ i ];
+            if( typeof( arg ) == 'string' ) {
+                lua = lua + '"' + arg + '"';
+            }
+            if( typeof( arg ) == 'number' ) {
+                lua = lua + arg
+            }
+            if( typeof( arg ) == 'undefined' ) {
+                lua = lua + 'undefined'
+            }
+            if( i < c ) {
+                lua = lua + ", "
+            }
+        }
+        lua = lua + ")"
+        location.href = "lua:" + lua
+    }
+    
+    pushresult = function( result ) {
+        location.href = "rsl:" + result;    
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -149,11 +194,6 @@ if( callCallback != NOOP ) {
             }
             myCallback.setUsedFiles( result );
         }
-    }
-
-    tellLightroomCurrentImageCount = function() {
-        var imgCount = LR.images.length;
-        callCallback("setImageCount", imgCount);
     }
 
     clickTarget = function( obj, target, imageID ) {
@@ -234,8 +274,8 @@ document.liveUpdateImageMaxSize = function( id, value ) {
 var storedGalleryAuthorURL = "";
 
 document.liveUpdate = function( path, newValue, cssId, property ) {
-    // window.alert(path + ' ' + newValue + ' ' + cssId);
-    var result = "invalidateOldHTML",
+    //window.alert(path + ' ' + newValue + ' ' + cssId);
+    var result = "failed",
         $el;
 
     // We can handle these all individually
@@ -284,7 +324,7 @@ document.liveUpdate = function( path, newValue, cssId, property ) {
             break;     
 
         // Color Palette
-        case "appearance.html.background-color":
+
         case "appearance.body.background-color":
         case "appearance.header_background.background-color":
         case "appearance.loupeContainer_background.background-color":
@@ -317,6 +357,7 @@ document.liveUpdate = function( path, newValue, cssId, property ) {
                 }
             );
 
+            result = "invalidateAllContent";
             break;
             
         case "appearance.body.color":
@@ -327,6 +368,7 @@ document.liveUpdate = function( path, newValue, cssId, property ) {
                     this.style.setProperty('color', newValue, 'important' );
                 }
             );
+            result = "invalidateAllContent";
             break;
             
         case "appearance.icons.fill":
@@ -337,24 +379,50 @@ document.liveUpdate = function( path, newValue, cssId, property ) {
                     this.style.setProperty('fill', newValue, 'important' );
                 }
             );
-            break;
-           
-
-        // The user changed the row height
-        case "metadata.rowHeight.value":
-
-            $el = $("body");
-            $el.attr("data-target-row-height", newValue);
-            WebGalleryTrack.sizeAllThumbnails();
+            result = "invalidateAllContent";
             break;
 
-        // The user changed the row spacing
-        case "metadata.rowSpacing.value":
+        case "appearance.thumbnail.border-color":
 
-            $el = $("body");
-            $el.removeClass("row-spacing-none row-spacing-sm row-spacing-md row-spacing-lg");
-            $el.addClass("row-spacing-" + newValue);
+            $el = $(".thumb-img");
+            $el.each(
+                function(index){
+                    this.style.setProperty('border-color', newValue, 'important' );
+                }
+            );
+            result = "invalidateAllContent";
+            break;
+
+        case "appearance.thumbnail.border-width":
+            
+            $el = $(".thumb-img");
+            $el.each(
+                function(index){
+                    this.style.setProperty('border-width', newValue, 'important' );
+                }
+            );
+            result = "invalidateAllContent";
+            break;
+
+        case "appearance.thumbnail.box-shadow":
+        
+            $el = $(".thumb-img");
+            $el.each(
+                function(index){
+                    this.style.setProperty('box-shadow', newValue, 'important' );
+                }
+            );
+            result = "invalidateAllContent";
             break;    
+
+        // The user changed the thumbnail size
+        case "metadata.thumbnailSize.value":
+
+            $el = $("#thumbnailContainer div.thumbnails");
+            $el.removeClass("thumbnail-size-sm thumbnail-size-md thumbnail-size-lg").addClass("thumbnail-size-" + newValue);
+            window.location.reload(true);
+            result = "invalidateAllContent";
+            break;   
 
         // The user changed the header visibility
         case "nonCSS.showHeader":
@@ -398,9 +466,6 @@ document.liveUpdate = function( path, newValue, cssId, property ) {
         case "nonCSS.itemsPerPage":
             window.location.reload(true);
             break;
-
-        default:
-            result = "failed";
 
     }
 
