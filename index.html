@@ -6,7 +6,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Island Urlaub 2018</title>
+        <title>Lightroom-Galerie</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" type="text/css" href="assets/css/normalize.css">
@@ -14,13 +14,17 @@
         <link rel="stylesheet" type="text/css" media="screen" title="Custom Settings" href="assets/css/custom.css" >
         <script src="assets/js/libs/modernizr.custom.23122.js"></script>
     </head>
-    <body class="has-header" data-pagination-style="scroll" data-pagination-size="20">
+    <body class="has-header row-spacing-md" data-pagination-style="scroll" data-target-row-height="200">
                         <header class="">
             <div class="background"></div>
-            <p class="title">
-                <strong id="galleryTitle">Island Urlaub 2018</strong>
-                 <span id="galleryAuthor">von B.Buske</span>
-                            </p>
+            <div class="meta-left">
+                <p id="galleryTitle" class="title">Lightroom-Galerie</p>
+                                <p id="galleryAuthor" class="author"></p>
+                                </p>
+            </div>
+            <div class="meta-right">
+
+            </div>
             <ul class="gallery-meta">
                 <li id="buttonFullscreen" title="Fullscreen Mode">
                     <div class="icon">
@@ -48,38 +52,29 @@
                         </svg>
                     </div>
                 </li>
-                            </ul>
+            </ul>
         </header>
                 <div id="thumbnailContainer">
-            <div class="thumbnails thumbnail-size-md"></div>
+            <div class="thumbnails"></div>
         </div>
         <div id="loupeContainer" class="show-corners">
             <div class="background"></div>
-            <div class="image-container"></div>
+            <div class="image-container"></div>    
             <div class="side-navigation">
                 <div class="hotspot" id="hotspotPrevLoupe">
                     <div class="button" id="buttonPrevSideLoupe">
-                        <svg version="1.1" id="svgIconPrevSideLoupe" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 30 57" style="enable-background:new 0 0 30 57;" xml:space="preserve">
-                            <path class="icon custom-colorable" d="M0,0v57c16.56854,0,30-12.75989,30-28.5S16.56854,0,0,0z M17.60291,33.87964
-                                c0.34692,0.3291,0.34998,0.85938,0.00708,1.18457l-1.2431,1.17828c-0.34326,0.32532-0.90277,0.32245-1.24969-0.00647
-                                L9.53137,30.9408L7,28.54163l8.20038-7.77301c0.35333-0.33508,0.92334-0.33801,1.27271-0.00671l1.26569,1.19952
-                                c0.34943,0.3313,0.34613,0.8714-0.00739,1.2063l-5.7149,5.41711L17.60291,33.87964z"/>
-                        </svg>
+                        <svg version="1.1" baseProfile="basic" id="svgIconPrevSideLoupe" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="50px" height="50px" viewBox="0 0 50 50" xml:space="preserve"><path class="icon custom-colorable" fill="#231F20" d="M0,0l0,50h50V0L0,0z M18.491,25.05l9.707-9.264c0.418-0.399,1.092-0.403,1.506-0.008l1.498,1.43c0.413,0.395,0.41,1.039-0.009,1.438l-6.765,6.456l6.613,6.31c0.41,0.392,0.414,1.024,0.008,1.412l-1.471,1.404c-0.406,0.387-1.068,0.384-1.479-0.008l-6.612-6.311L18.491,25.05z"/></svg>
                     </div>
                 </div>
                 <div class="hotspot" id="hotspotNextLoupe">
                     <div class="button" id="buttonNextSideLoupe">
-                        <svg version="1.1" id="svgIconNextSideLoupe" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 30 57" style="enable-background:new 0 0 30 57;" xml:space="preserve">
-                            <path class="icon custom-colorable" d="M30,57V0C13.43146,0,0,12.75989,0,28.5S13.43146,57,30,57z M12.39709,23.12036
-                                c-0.34692-0.3291-0.34998-0.85938-0.00708-1.18457l1.2431-1.17828c0.34326-0.32532,0.90277-0.32245,1.24969,0.00647l5.58582,5.29523
-                                L23,28.45837l-8.20038,7.77301c-0.35333,0.33508-0.92334,0.33801-1.27271,0.00671l-1.26569-1.19952
-                                c-0.34943-0.3313-0.34613-0.8714,0.00739-1.2063l5.7149-5.41711L12.39709,23.12036z"/>
+                        <svg version="1.1" baseProfile="basic" id="svgIconNextSideLoupe" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="50px" height="50px" viewBox="0 0 50 50" xml:space="preserve">
+                            <path class="icon custom-colorable" fill="#231F20" d="M0,0v50h50V0H0z M28.513,27.909l-6.612,6.311c-0.411,0.392-1.073,0.395-1.479,0.008l-1.471-1.404 c-0.406-0.388-0.402-1.02,0.008-1.412l6.613-6.31l-6.765-6.456c-0.419-0.399-0.422-1.043-0.009-1.438l1.498-1.43 c0.414-0.395,1.088-0.391,1.506,0.008l9.707,9.264L28.513,27.909z"/>
                         </svg>
                     </div>
                 </div>
             </div>
-            <div class="info-container">
-                <div id="loupeMeta"></div>
+            <div class="lateral-nav-container">
                 <ul class="lateral-nav">
                     <li id="buttonPrev">
                         <svg version="1.1" id="svgIconPrevLoupe" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 45 45" style="enable-background:new 0 0 45 45;" xml:space="preserve">
@@ -104,6 +99,9 @@
                     </li>
                 </ul>
             </div>
+            <div class="info-container">
+                <div id="loupeMeta"></div>
+            </div>
             <div id="loupeCloseButton">
                 <svg version="1.1" id="svgIconLoupeClose" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                      viewBox="0 0 45 45" style="enable-background:new 0 0 45 45;" xml:space="preserve">
@@ -117,42 +115,43 @@
         </div>
         <script type="text/javascript">
             var LR = LR || {};
-            LR.images = [                                                                                        {"id": "80521", "exportFilename": "Unterwegs_3", "title": "", "caption" : "Unterwegs_3"},
-                         {"id": "80539", "exportFilename": "Am_Sko_gafoss_1", "title": "", "caption" : "Am Skógafoss_1"},
-                         {"id": "80556", "exportFilename": "Sko_gafoss_1", "title": "", "caption" : "Skógafoss_1"},
-                         {"id": "80574", "exportFilename": "Fjar_ara_rglju_fur_Viewpoint_1", "title": "", "caption" : "Fjarðarárgljúfur Viewpoint_1"},
-                         {"id": "80592", "exportFilename": "Halbinsel_Vatnsnes_9", "title": "", "caption" : "Halbinsel Vatnsnes_9"},
-                         {"id": "80609", "exportFilename": "Unterwegs_11", "title": "", "caption" : "Unterwegs_11"},
-                         {"id": "80626", "exportFilename": "Leuchtturm_Kap_Dyrholaey", "title": "", "caption" : "Leuchtturm Kap Dyrholaey"},
-                         {"id": "80644", "exportFilename": "Schwarzer_Strand_3", "title": "", "caption" : "Schwarzer Strand_3"},
-                         {"id": "80661", "exportFilename": "Kap_Dyrholaey_3", "title": "", "caption" : "Kap Dyrholaey_3"},
-                         {"id": "80679", "exportFilename": "Papageientaucher_3", "title": "", "caption" : "Papageientaucher_3"},
-                         {"id": "80697", "exportFilename": "Papageientaucher_2", "title": "", "caption" : "Papageientaucher_2"},
-                         {"id": "80715", "exportFilename": "Basaltwand_2", "title": "", "caption" : "Basaltwand_2"},
-                         {"id": "80732", "exportFilename": "Reynisdrangar_2", "title": "", "caption" : "Reynisdrangar_2"},
-                         {"id": "80750", "exportFilename": "IMG_20180825_112829", "title": "", "caption" : "IMG_20180825_112829"},
-                         {"id": "80767", "exportFilename": "IMG_20180825_115734", "title": "", "caption" : "IMG_20180825_115734"},
-                         {"id": "80784", "exportFilename": "So_lheimajo_kulll_1", "title": "", "caption" : "Sólheimajökulll_1"},
-                         {"id": "80801", "exportFilename": "B_B_vorm_Seljalandsfoss", "title": "", "caption" : "B_B_vorm_Seljalandsfoss"},
-                         {"id": "80818", "exportFilename": "Strokkur_1", "title": "", "caption" : "Strokkur_1"},
-                         {"id": "80836", "exportFilename": "Kjo_lur_Hochlandpiste_2", "title": "", "caption" : "Kjölur Hochlandpiste_2"},
-                         {"id": "80854", "exportFilename": "Flechte", "title": "", "caption" : "Flechte"},
-                         {"id": "80871", "exportFilename": "Halbinsel_Vatnsnes_4", "title": "", "caption" : "Halbinsel Vatnsnes_4"},
-                         {"id": "80889", "exportFilename": "Halbinsel_Vatnsnes_7", "title": "", "caption" : "Halbinsel Vatnsnes_7"},
-                         {"id": "80907", "exportFilename": "Leiwagen_verdreckt", "title": "", "caption" : "Leiwagen verdreckt"},
-                         {"id": "80924", "exportFilename": "Bjarnarfoss_3", "title": "", "caption" : "Bjarnarfoss_3"},
-                         {"id": "80941", "exportFilename": "Vatnshellir_Ho_hle_2", "title": "", "caption" : "Vatnshellir Höhle_2"},
-                         {"id": "80959", "exportFilename": "Dju_palo_nssandur_3", "title": "", "caption" : "Djúpalónssandur_3"},
-                         {"id": "80976", "exportFilename": "Arnarstapi", "title": "", "caption" : "Arnarstapi"},
-                         {"id": "80993", "exportFilename": "Sn_fellsnes_12", "title": "", "caption" : "Snæfellsnes_12"},
-                         {"id": "81011", "exportFilename": "Sn_fellsnes_11", "title": "", "caption" : "Snæfellsnes_11"},
-                         {"id": "81029", "exportFilename": "Hraunfossar_3", "title": "", "caption" : "Hraunfossar_3"},
-                         {"id": "81046", "exportFilename": "Grabrok_13", "title": "", "caption" : "Grabrok_13"},
-                         {"id": "81063", "exportFilename": "Hotel_A_Unterkunft", "title": "", "caption" : "Hotel A Unterkunft"},
-                         {"id": "81080", "exportFilename": "Oldtimer", "title": "", "caption" : "Oldtimer"},
+            LR.images = [                                                                                        {"id": "80521", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Unterwegs_3", "title": "", "caption" : "Unterwegs_3"},
+                         {"id": "80539", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Am_Sko_gafoss_1", "title": "", "caption" : "Am Skógafoss_1"},
+                         {"id": "80556", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Sko_gafoss_1", "title": "", "caption" : "Skógafoss_1"},
+                         {"id": "80574", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Fjar_ara_rglju_fur_Viewpoint_1", "title": "", "caption" : "Fjarðarárgljúfur Viewpoint_1"},
+                         {"id": "80592", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Halbinsel_Vatnsnes_9", "title": "", "caption" : "Halbinsel Vatnsnes_9"},
+                         {"id": "80609", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Unterwegs_11", "title": "", "caption" : "Unterwegs_11"},
+                         {"id": "80626", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Leuchtturm_Kap_Dyrholaey", "title": "", "caption" : "Leuchtturm Kap Dyrholaey"},
+                         {"id": "80644", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Schwarzer_Strand_3", "title": "", "caption" : "Schwarzer Strand_3"},
+                         {"id": "80661", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Kap_Dyrholaey_3", "title": "", "caption" : "Kap Dyrholaey_3"},
+                         {"id": "80679", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Papageientaucher_3", "title": "", "caption" : "Papageientaucher_3"},
+                         {"id": "80697", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Papageientaucher_2", "title": "", "caption" : "Papageientaucher_2"},
+                         {"id": "80715", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Basaltwand_2", "title": "", "caption" : "Basaltwand_2"},
+                         {"id": "80732", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Reynisdrangar_2", "title": "", "caption" : "Reynisdrangar_2"},
+                         {"id": "80750", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "IMG_20180825_112829", "title": "", "caption" : "IMG_20180825_112829"},
+                         {"id": "80767", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "IMG_20180825_115734", "title": "", "caption" : "IMG_20180825_115734"},
+                         {"id": "80784", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "So_lheimajo_kulll_1", "title": "", "caption" : "Sólheimajökulll_1"},
+                         {"id": "80801", "largeWidth": "900", "largeHeight": "1200", "exportFilename": "B_B_vorm_Seljalandsfoss", "title": "", "caption" : "B_B_vorm_Seljalandsfoss"},
+                         {"id": "80818", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Strokkur_1", "title": "", "caption" : "Strokkur_1"},
+                         {"id": "80836", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Kjo_lur_Hochlandpiste_2", "title": "", "caption" : "Kjölur Hochlandpiste_2"},
+                         {"id": "80854", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Flechte", "title": "", "caption" : "Flechte"},
+                         {"id": "80871", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Halbinsel_Vatnsnes_4", "title": "", "caption" : "Halbinsel Vatnsnes_4"},
+                         {"id": "80889", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Halbinsel_Vatnsnes_7", "title": "", "caption" : "Halbinsel Vatnsnes_7"},
+                         {"id": "80907", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Leiwagen_verdreckt", "title": "", "caption" : "Leiwagen verdreckt"},
+                         {"id": "80924", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Bjarnarfoss_3", "title": "", "caption" : "Bjarnarfoss_3"},
+                         {"id": "80941", "largeWidth": "900", "largeHeight": "1200", "exportFilename": "Vatnshellir_Ho_hle_2", "title": "", "caption" : "Vatnshellir Höhle_2"},
+                         {"id": "80959", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Dju_palo_nssandur_3", "title": "", "caption" : "Djúpalónssandur_3"},
+                         {"id": "80976", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Arnarstapi", "title": "", "caption" : "Arnarstapi"},
+                         {"id": "80993", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Sn_fellsnes_12", "title": "", "caption" : "Snæfellsnes_12"},
+                         {"id": "81011", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Sn_fellsnes_11", "title": "", "caption" : "Snæfellsnes_11"},
+                         {"id": "81029", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Hraunfossar_3", "title": "", "caption" : "Hraunfossar_3"},
+                         {"id": "81046", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Grabrok_13", "title": "", "caption" : "Grabrok_13"},
+                         {"id": "81063", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Hotel_A_Unterkunft", "title": "", "caption" : "Hotel A Unterkunft"},
+                         {"id": "81080", "largeWidth": "1200", "largeHeight": "900", "exportFilename": "Oldtimer", "title": "", "caption" : "Oldtimer"},
                                     ]        </script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="assets/js/libs/jquery-1.10.2.min.js"><\/script>')</script>
+        <script src="assets/js/libs/jquery.velocity.min.js"></script>
         <script src="assets/js/main.js"></script>
     </body>
 </html>
