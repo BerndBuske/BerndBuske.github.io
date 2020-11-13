@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0"
+     xmlns:media="http://search.yahoo.com/mrss/"
+     xmlns:jalbum="http://jalbum.net/jalbumrss">
+    <channel>
+        <title>iPhone XS max</title>
+   	<link>.</link>
+        <generator>jAlbum 22</generator>
+   		<description></description>
+        <jalbum:absolutePath></jalbum:absolutePath>
+        <item>
+            <title>iPhone XS max Bild 2</title>
+            <link>slides/iPhone%20XS%20max%20Bild%202.jpeg</link>
+            <pubDate>Fri, 13 Nov 2020 17:34:42 +0100</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/iPhone%20XS%20max%20Bild%202.jpeg" width="340" height="260"/>
+            <media:content type="image/jpeg" url="slides/iPhone%20XS%20max%20Bild%202.jpeg" width="1200" height="900"/>
+            <jalbum:exif originalDate="Fri, 13 Nov 2020 16:53:12 +0100" cameraMake="Apple" cameraModel="iPhone 12 Pro Max"/>
+            <guid isPermaLink="false">slides/iPhone%20XS%20max%20Bild%202.jpeg</guid>
+        </item>
+        <item>
+            <title>iPhone XS max Bild 4</title>
+            <link>slides/iPhone%20XS%20max%20Bild%203.jpeg</link>
+            <pubDate>Fri, 13 Nov 2020 17:34:42 +0100</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/iPhone%20XS%20max%20Bild%203.jpeg" width="340" height="260"/>
+            <media:content type="image/jpeg" url="slides/iPhone%20XS%20max%20Bild%203.jpeg" width="1200" height="900"/>
+            <jalbum:exif originalDate="Fri, 13 Nov 2020 16:53:34 +0100" cameraMake="Apple" cameraModel="iPhone 12 Pro Max"/>
+            <guid isPermaLink="false">slides/iPhone%20XS%20max%20Bild%203.jpeg</guid>
+        </item>
+        <item>
+            <title>iPhone XS max Bild 8</title>
+            <link>slides/iPhone%20XS%20max%20Bild%207.jpeg</link>
+            <pubDate>Fri, 13 Nov 2020 17:34:42 +0100</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/iPhone%20XS%20max%20Bild%207.jpeg" width="340" height="260"/>
+            <media:content type="image/jpeg" url="slides/iPhone%20XS%20max%20Bild%207.jpeg" width="1200" height="893"/>
+            <jalbum:exif originalDate="Fri, 13 Nov 2020 16:54:58 +0100" cameraMake="Apple" cameraModel="iPhone 12 Pro Max"/>
+            <guid isPermaLink="false">slides/iPhone%20XS%20max%20Bild%207.jpeg</guid>
+        </item>
+        <item>
+            <title>iPhone XS max Bild 5</title>
+            <link>slides/iPhone%20XS%20max%20Bild%205.jpeg</link>
+            <pubDate>Fri, 13 Nov 2020 17:34:42 +0100</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/iPhone%20XS%20max%20Bild%205.jpeg" width="340" height="260"/>
+            <media:content type="image/jpeg" url="slides/iPhone%20XS%20max%20Bild%205.jpeg" width="1200" height="900"/>
+            <jalbum:exif originalDate="Fri, 13 Nov 2020 16:55:53 +0100" cameraMake="Apple" cameraModel="iPhone 12 Pro Max"/>
+            <guid isPermaLink="false">slides/iPhone%20XS%20max%20Bild%205.jpeg</guid>
+        </item>
+        <item>
+            <title>iPhone XS max Bild 6</title>
+            <link>slides/iPhone%20XS%20max%20Bild%206.jpeg</link>
+            <pubDate>Fri, 13 Nov 2020 17:34:42 +0100</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/iPhone%20XS%20max%20Bild%206.jpeg" width="340" height="260"/>
+            <media:content type="image/jpeg" url="slides/iPhone%20XS%20max%20Bild%206.jpeg" width="900" height="1200"/>
+            <jalbum:exif originalDate="Fri, 13 Nov 2020 16:59:37 +0100" cameraMake="Apple" cameraModel="iPhone 12 Pro Max"/>
+            <guid isPermaLink="false">slides/iPhone%20XS%20max%20Bild%206.jpeg</guid>
+        </item>
+        <item>
+            <title>iPhone XS max Bild 1</title>
+            <link>slides/iPhone%20XS%20max%20Bild%201.jpeg</link>
+            <pubDate>Fri, 13 Nov 2020 17:34:42 +0100</pubDate>
+            <description></description>
+            <media:description type="html"></media:description>
+            <media:thumbnail url="thumbs/iPhone%20XS%20max%20Bild%201.jpeg" width="340" height="260"/>
+            <media:content type="image/jpeg" url="slides/iPhone%20XS%20max%20Bild%201.jpeg" width="900" height="1200"/>
+            <jalbum:exif originalDate="Fri, 13 Nov 2020 17:01:26 +0100" cameraMake="Apple" cameraModel="iPhone 12 Pro Max"/>
+            <guid isPermaLink="false">slides/iPhone%20XS%20max%20Bild%201.jpeg</guid>
+        </item>
+    </channel>
+</rss>
